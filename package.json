@@ -1,0 +1,13 @@
+{
+    "dependencies": {
+        "xml2js": "^0.4.19"
+    },
+    "displayName": "Cortex-Debug",
+    "engines": {
+        "vscode": "^1.18.0"
+    },
+    "main": "./out/main",
+    "devDependencies": {
+        "@types/node": "^10.0.3"
+    }
+}
