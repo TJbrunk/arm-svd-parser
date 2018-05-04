@@ -80,7 +80,7 @@ export class FieldNode implements FieldOptions{
 /*
     public getTreeNode(): TreeNode {
         const value = this.parent.extractBits(this.offset, this.width);
-        let evalue = null;
+        let evalue = undefined;
         let label = this.name;
 
         const rangestart = this.offset;
@@ -184,7 +184,7 @@ export class FieldNode implements FieldOptions{
 
     public _findByPath(path: string[]): BaseNode {
         if (path.length === 0) { return this; }
-        else { return null; }
+        else { return undefined; }
     }
     */
 }

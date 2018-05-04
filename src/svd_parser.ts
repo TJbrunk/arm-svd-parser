@@ -30,6 +30,7 @@ export class SvdParser {
             // At least one peripheral must be defined, but handle if there is more than one
             result.device.peripherals[0].peripheral.forEach(peripheral => {
                 // For each 'peripheral' in the peripherals section, parse it into the correct element
+                var x = peripheral.$ && peripheral.$.derivedFrom || null;
                 let perf = new Peripheral(peripheral);
                 perf.parseChildren(peripheral);
                 console.log(perf)
@@ -72,12 +73,26 @@ export const ACCESS_TYPE_MAP = {
 
 
 //https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_special.html#dimElementGroup_gr
-export interface DimElement {
+export class DimElement {
     dim: number;
     increment: number;
     index?: number;
     name?: string;
     arrayIndex?: number; // This is header/enum data
+
+    constructor(xml: string) {
+        if(xml['dim']) {
+            this.dim = xml['dim'][0];
+            this.increment = xml['dimIncrement'][0];
+            this.arrayIndex = xml['dimArrayIndex'] ? xml['dimArrayIndex'][0] : undefined;
+            this.index = xml['dimIndex'] ? xml['dimIndex'][0] : undefined;
+            this.name = xml['dimName'] ? xml['dimName'][0] : undefined;
+            return this;
+        }
+        else {
+            return undefined;
+        }
+    }
 }
 
 

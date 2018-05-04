@@ -15,7 +15,7 @@ export class Cluster {
     registers?: [Register];
     clusters?: [Cluster];
     constructor (xml: string) {
-        this.dim = null;
+        this.dim = undefined;
         this.name = xml['name'][0];
         this.offset = xml['offset'][0];
     }
