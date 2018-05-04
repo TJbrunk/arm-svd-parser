@@ -7,7 +7,7 @@ import {SvdParser} from './src/svd_parser'
 class Startup {
 
     public static main(): number {
-        SvdParser.Parse()
+        SvdParser.Parse('/home/tyler/Projects/arm-svd-parser/svd-example.xml')
         return 0;
     }
 }
