@@ -80,18 +80,13 @@ export class DimElement {
     name?: string;
     arrayIndex?: number; // This is header/enum data
 
-    constructor(xml: string) {
-        if(xml['dim']) {
-            this.dim = xml['dim'][0];
-            this.increment = xml['dimIncrement'][0];
-            this.arrayIndex = xml['dimArrayIndex'] ? xml['dimArrayIndex'][0] : undefined;
-            this.index = xml['dimIndex'] ? xml['dimIndex'][0] : undefined;
-            this.name = xml['dimName'] ? xml['dimName'][0] : undefined;
-            return this;
-        }
-        else {
-            return undefined;
-        }
+    constructor(xml: any) {
+        this.dim = xml.dim && xml.dim[0];
+        this.increment = xml.dimIncrement && xml.dimIncrement[0];
+        this.arrayIndex = xml.dimArrayIndex && xml.dimArrayIndex[0];
+        this.index = xml.dimIndex && xml.dimIndex[0];
+        this.name = xml.dimName && xml.dimName[0];
+        return this;
     }
 }
 

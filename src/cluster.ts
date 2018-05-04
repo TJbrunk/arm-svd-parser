@@ -14,9 +14,9 @@ export class Cluster {
     props?: RegisterProperties;
     registers?: [Register];
     clusters?: [Cluster];
-    constructor (xml: string) {
-        this.dim = undefined;
-        this.name = xml['name'][0];
-        this.offset = xml['offset'][0];
+    constructor (xml: any) {
+        this.dim = new DimElement(xml);
+        this.name = xml.name && xml.name[0];
+        this.offset = xml.offset && xml.offset[0];
     }
 }

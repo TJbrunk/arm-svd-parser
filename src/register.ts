@@ -25,20 +25,20 @@ export class Register extends BaseElement {
     // readAction?: 
     // fields?: FieldNode;
 
-    constructor(xml: string) {
+    constructor(xml: any) {
         super(xml);
         this.dimElement = new DimElement(xml);
-        this.displayName = xml['displayName'] ? xml['displayName'][0] : undefined;
-        this.altGroup = xml['alternateGroup'] ? xml['alternateGroup'][0] : undefined;
-        this.altRegister = xml['alternateRegister'] ? xml['alternateRegister'][0] : undefined;
-        this.offset = xml['addressOffset'] ? xml['addressOffset'][0] : undefined;
+        this.displayName = xml.displayName && xml.displayName[0];
+        this.altGroup = xml.alternateGroup && xml.alternateGroup[0];
+        this.altRegister = xml.alternateRegister && xml.alternateRegister[0];
+        this.offset = xml.addressOffset[0];
         this.properties = new RegisterProperties(xml);
-        this.dataType = xml['dataType'] ? xml['dataType'][0] : undefined;
-        this.modifiedWrite = xml['modifiedWriteValues'] ? xml['modifiedWriteValues'][0] : undefined;
+        this.dataType = xml.dataType && xml.dataType[0];
+        this.modifiedWrite = xml.modifiedWriteValues && xml.modifiedWriteValues[0];
         this.writeContraint = new WriteConstraint(xml);
     }
 
-    public parseChildren(xml: string) {
+    public parseChildren(xml: any) {
         throw new Error("Method not implemented.");
     }
 }
@@ -51,23 +51,13 @@ export class RegisterProperties {
     resetValue?: number;
     resetMask?: number;
 
-    constructor (xml: string) {
-            this.size = xml['size'] ? parseInteger(xml['size'][0]) : undefined;
-
-            if(this.size > 0) {
-                if(xml['access']) {
-                    this.access = ACCESS_TYPE_MAP[xml['access'][0]]; 
-                }
-                if(xml['protection']) {
-                    this.protection = <ProtectionType>xml['protection'][0];
-                }
-                this.resetValue = xml['resetValue'] ? xml['resetValue'][0] : undefined;
-                this.resetMask = xml['resetMask'] ? xml['resetMask'][0] : undefined;
-                return this;
-            }
-            else {
-                return undefined;
-            }
+    constructor (xml: any) {
+            this.size = parseInteger(xml.size && xml.size[0])
+            this.access = ACCESS_TYPE_MAP[xml.access && xml.access[0]]; 
+            this.protection = <ProtectionType>xml.protection && xml.protection[0];
+            this.resetValue = xml.resetValue && xml.resetValue[0];
+            this.resetMask = xml.resetMask && xml.resetMask[0];
+            return this;
     }
 }
 

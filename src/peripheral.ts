@@ -23,35 +23,39 @@ export class Peripheral extends BaseElement{
     // headerStructName?: ;
     // disableCondition? : string;
 
-    constructor (xml: string) {
+    constructor (xml: any) {
         super(xml);
-        this.verion = xml['version'][0];
-        this.groupName = xml['groupName'];// ? xml['groupName'][0] : null;
-        this.baseAddress = parseInteger(xml['baseAddress'][0]);
+        this.verion = xml.version[0];
+        this.groupName = xml.groupName && xml.groupName[0];
+        this.baseAddress = parseInteger(xml.baseAddress[0]);
     }
 
-    public parseChildren(xml: string) {
+    public parseChildren(xml: any) {
         // Can be 0 or 1 Register property in a peripheral
         this.properties = new RegisterProperties(xml);
+
         // Can be multiple address blocks, so loop over all of them
-        if(xml['addressBlock']) {
+        let hasAddressBlock = xml.addressBlock;
+        if(hasAddressBlock) {
             this.addressBlocks = [];
-            xml['addressBlock'].forEach(block => {
+            xml.addressBlock.forEach(block => {
                 this.addressBlocks.push(new AddressBlock(block));
             });
         }
 
-        if(xml['interrupt']) {
+        let hasInterrups = xml.interrupt;
+        if(hasInterrups) {
             this.interrupts = [];
-            xml['interrupt'].forEach(int => {
+            xml.interrupt.forEach(int => {
                 this.interrupts.push(new Interrupt(int));
             });
         }
+        
 
-        let regs = xml['registers'] ? xml['registers'][0] : null;
-        if(regs) {
+        if(xml.registers)
+        {
             this.registers = [];
-            regs.register.forEach(reg => {
+            xml.registers[0].register.forEach(reg => {
                 // The <registers></registers> block may also contain cluster element
                 this.registers.push(new Register(reg));
             });

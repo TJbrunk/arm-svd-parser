@@ -9,14 +9,15 @@ export class WriteConstraint {
     public writeAsRead?: boolean;
     public useEnumValues?: boolean;
 
-    constructor(xml : string) {
-        if(xml['range'])  {
-            this.min = xml['range'][0]['minimum'][0];
-            this.max = xml['range'][0]['maximum'][0];
+    constructor(xml : any) {
+        let range = xml.range && xml.range[0];
+        if(range)  {
+            this.min = range.minimum[0];
+            this.max = range.maximum[0];
         }
 
-        this.writeAsRead = xml['writeAsRead'] ? xml['writeAsRead'][0] : undefined;
-        this.useEnumValues = xml['useEnumValues'] ? xml['useEnumValues'][0] : undefined;
+        this.writeAsRead = xml.writeAsRead && xml.writeAsRead[0];
+        this.useEnumValues = xml.useEnumValues && xml.useEnumValues[0];
     }
 }
 
