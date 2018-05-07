@@ -7,7 +7,8 @@ import {SvdParser} from './src/svd_parser'
 class Startup {
 
     public static main(): number {
-        SvdParser.Parse()
+        let svd = new SvdParser()
+        svd.Parse('svd-example.xml');
         return 0;
     }
 }

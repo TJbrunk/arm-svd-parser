@@ -3,17 +3,16 @@ import { BaseElement } from "./base_element";
 
 // https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_peripherals.html#elem_interrupt
 export class Interrupt extends BaseElement {
-    
     value: number;
 
-    constructor (xml: string) {
+    constructor (xml: any) {
         super(xml);
-        this.value = parseInteger(xml['value'][0]);
+        this.value = parseInteger(xml.value[0]);
         
         return this;
     }
 
-    public parseChildren(xml: string) {
+    public parseChildren(xml: any) {
         // Interrupts don't have any childre
         return;
     }

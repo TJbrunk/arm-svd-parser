@@ -23,12 +23,30 @@ export class Peripheral extends BaseElement{
     // headerStructName?: ;
     // disableCondition? : string;
 
-    constructor (xml: any) {
-        super(xml);
-        this.verion = xml.version[0];
-        this.groupName = xml.groupName && xml.groupName[0];
-        this.baseAddress = parseInteger(xml.baseAddress[0]);
+    constructor (xml: any, source?: Peripheral) {
+        if(source) {
+            // If a new description isn't provided, copy the description that we're inheriting from
+            if(xml.description === null || xml.description === undefined) {
+                super(xml, source.description);
+            }
+            else {
+                super(xml);
+            }
+            this.verion = source.verion;
+            this.groupName = source.groupName;
+            this.properties = source.properties;
+            this.addressBlocks = source.addressBlocks;
+            this.interrupts = source.interrupts;
+            this.registers = source.registers;
+        }
+        else {
+            super(xml);
+            this.verion = xml.version[0];
+            this.groupName = xml.groupName && xml.groupName[0];
+            this.baseAddress = parseInteger(xml.baseAddress[0]);
+        }
     }
+
 
     public parseChildren(xml: any) {
         // Can be 0 or 1 Register property in a peripheral

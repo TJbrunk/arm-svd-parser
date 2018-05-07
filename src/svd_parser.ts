@@ -22,7 +22,10 @@ export function parseInteger(value: string): number {
 
 export class SvdParser {
 
-    public static parseXml (err, xml: string) {
+    // peripherals: Array<Peripheral> = [];
+    peripherals: Map<string, Peripheral> = new Map();
+    
+    private parseXml (err, xml: string) {
         if(err) throw err;
         xml2js.parseString(xml, (err, result) => {
             // Skip over CPU/Device stuff for now
@@ -30,19 +33,31 @@ export class SvdParser {
             // At least one peripheral must be defined, but handle if there is more than one
             result.device.peripherals[0].peripheral.forEach(peripheral => {
                 // For each 'peripheral' in the peripherals section, parse it into the correct element
-                var x = peripheral.$ && peripheral.$.derivedFrom || null;
-                let perf = new Peripheral(peripheral);
+                let isDerived = peripheral.$ && peripheral.$.derivedFrom || null;
+
+                let derived = null;
+
+                // If this peripheral is derived from another, initialize it with all the same settings.
+                // Any differences will be overwritten later
+                if(isDerived) {
+                    derived = this.peripherals.get(isDerived);
+                }
+                // derived = new Peripheral(peripheral);
+                let perf = new Peripheral(peripheral, derived);
                 perf.parseChildren(peripheral);
+
+                // Add the peripheral to the array
+                this.peripherals.set(perf.name, perf);
                 console.log(perf)
             });
         });
     }
 
-    public static Parse(svdFile: string = 'C:/Users/tylerb/Downloads/SiliconLabs.EFM32GG_DFP.5.4.1/SVD/EFM32GG/EFM32GG995F1024.svd') {
+    public Parse(svdFile: string = 'EFM32GG995F1024.svd') {
         // let SVDFile = 'svd-example.xml';
         //let SVDFile = 'C:/Users/tylerb/Downloads/SiliconLabs.EFM32GG_DFP.5.4.1/SVD/EFM32GG/EFM32GG995F1024.svd';
 
-        fs.readFile(svdFile, 'utf8', (err, xml) => SvdParser.parseXml(err, xml));
+        fs.readFile(svdFile, 'utf8', (err, xml) => this.parseXml(err, xml));
     }
 }
 

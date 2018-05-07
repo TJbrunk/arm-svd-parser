@@ -4,8 +4,5 @@
         "module": "commonjs",
         "sourceMap": true,
         "outDir": "out",
-        "lib": [
-            "es6"
-        ],
     }
 }
