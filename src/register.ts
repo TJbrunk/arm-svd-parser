@@ -1,7 +1,7 @@
 import { BaseElement } from "./base_element";
 import { DimElement, AccessType, ProtectionType, parseInteger, ACCESS_TYPE_MAP } from "./svd_parser";
 import { WriteConstraint } from "./write_constraint";
-import { FieldNode } from "./field";
+import { Field } from "./field";
 
 export enum DataType {
     uint8 = 'uint8_t',
@@ -23,7 +23,7 @@ export class Register extends BaseElement {
     modifiedWrite?: ModifiedWriteType;
     writeContraint?: WriteConstraint;
     // readAction?: 
-    // fields?: FieldNode;
+    fields?: Array<Field>;
 
     constructor(xml: any) {
         super(xml);
@@ -31,15 +31,22 @@ export class Register extends BaseElement {
         this.displayName = xml.displayName && xml.displayName[0];
         this.altGroup = xml.alternateGroup && xml.alternateGroup[0];
         this.altRegister = xml.alternateRegister && xml.alternateRegister[0];
-        this.offset = xml.addressOffset[0];
+        this.offset = parseInteger(xml.addressOffset[0]);
         this.properties = new RegisterProperties(xml);
         this.dataType = xml.dataType && xml.dataType[0];
         this.modifiedWrite = xml.modifiedWriteValues && xml.modifiedWriteValues[0];
         this.writeContraint = new WriteConstraint(xml);
     }
 
-    public parseChildren(xml: any) {
-        throw new Error("Method not implemented.");
+    public parseChildren(register: any) {
+        if(register.fields) {
+            this.fields = [];
+            register.fields[0].field.forEach(f => {
+                let field = new Field(f);
+                field.parseBitOffset(f, this);
+                this.fields.push(field);
+            });
+        }
     }
 }
 
@@ -55,8 +62,8 @@ export class RegisterProperties {
             this.size = parseInteger(xml.size && xml.size[0])
             this.access = ACCESS_TYPE_MAP[xml.access && xml.access[0]]; 
             this.protection = <ProtectionType>xml.protection && xml.protection[0];
-            this.resetValue = xml.resetValue && xml.resetValue[0];
-            this.resetMask = xml.resetMask && xml.resetMask[0];
+            this.resetValue = parseInteger(xml.resetValue && xml.resetValue[0]);
+            this.resetMask = parseInteger(xml.resetMask && xml.resetMask[0]);
             return this;
     }
 }

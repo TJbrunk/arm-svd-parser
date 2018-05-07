@@ -20,6 +20,7 @@ export function parseInteger(value: string): number {
     return undefined;
 }
 
+// Parses SVD files into equivalent typescript objects
 export class SvdParser {
 
     // peripherals: Array<Peripheral> = [];
@@ -30,7 +31,6 @@ export class SvdParser {
         xml2js.parseString(xml, (err, result) => {
             // Skip over CPU/Device stuff for now
 
-            // At least one peripheral must be defined, but handle if there is more than one
             result.device.peripherals[0].peripheral.forEach(peripheral => {
                 // For each 'peripheral' in the peripherals section, parse it into the correct element
                 let isDerived = peripheral.$ && peripheral.$.derivedFrom || null;
@@ -88,6 +88,11 @@ export const ACCESS_TYPE_MAP = {
 
 
 //https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_special.html#dimElementGroup_gr
+// The elements below appear on various levels and can be used to define arrays and lists in the code. Single descriptions get duplicated automatically into an array or a list. The subsequent is true for all elements of type dimableIdentifierType.
+//     To create arrays, use the placeholder [%s] at the end of a <name> and <displayName>. Do not define <dimIndex> in this case!
+//     To create lists, use the placeholder %s anywhere within or at the end of a <name> and <displayName>.
+// Note: 
+//     Some of the <name> and <displayName> elements can use both placeholders ([%s], %s), others just one. Refer to peripheral, register, cluster, and field for details.
 export class DimElement {
     dim: number;
     increment: number;

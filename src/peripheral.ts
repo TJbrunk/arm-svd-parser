@@ -1,4 +1,4 @@
-import { parseInteger } from "./svd_parser";
+import { parseInteger, DimElement } from "./svd_parser";
 import { AddressBlock } from "./address_block";
 import { Register, RegisterProperties } from "./register";
 import { BaseElement } from "./base_element";
@@ -8,6 +8,7 @@ import { Interrupt } from "./interrupt";
 // https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_peripherals.html#elem_peripheral
 export class Peripheral extends BaseElement{
 
+    dimElement?: DimElement;
     verion?: string;
     groupName?: string;
     baseAddress: number;
@@ -24,6 +25,7 @@ export class Peripheral extends BaseElement{
     // disableCondition? : string;
 
     constructor (xml: any, source?: Peripheral) {
+        // A source will be provided, if this peripherial is inheriting from a different peripheral
         if(source) {
             // If a new description isn't provided, copy the description that we're inheriting from
             if(xml.description === null || xml.description === undefined) {
@@ -49,6 +51,10 @@ export class Peripheral extends BaseElement{
 
 
     public parseChildren(xml: any) {
+
+        // 0-1 dimElementGroup properties
+        this.dimElement = new DimElement(xml);
+
         // Can be 0 or 1 Register property in a peripheral
         this.properties = new RegisterProperties(xml);
 
@@ -75,7 +81,9 @@ export class Peripheral extends BaseElement{
             this.registers = [];
             xml.registers[0].register.forEach(reg => {
                 // The <registers></registers> block may also contain cluster element
-                this.registers.push(new Register(reg));
+                let newReg = new Register(reg);
+                newReg.parseChildren(reg);
+                this.registers.push(newReg);
             });
         }
     }

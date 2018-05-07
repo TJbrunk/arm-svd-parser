@@ -8,7 +8,7 @@ class Startup {
 
     public static main(): number {
         let svd = new SvdParser()
-        svd.Parse('svd-example.xml');
+        svd.Parse();
         return 0;
     }
 }
