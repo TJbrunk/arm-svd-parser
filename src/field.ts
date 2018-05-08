@@ -1,7 +1,7 @@
 // SVD Field element
 //https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_registers.html#elem_field
 
-import { AccessType, DimElement, parseInteger } from './svd_parser'
+import { AccessType, DimElement, parseNumber } from './svd_parser'
 import { WriteConstraint } from './write_constraint';
 import { EnumeratedValues, EnumeratedValue } from './enumerated_value';
 import { ModifiedWriteType } from './register';
@@ -31,23 +31,25 @@ export class Field extends BaseElement{
     public parseBitOffset(xml: any, baseAddress: any) {
         // bit range and offset can be defined three different way. handle each and convert to Offset & width:
         if(xml.bitOffset) {
-            this.bitOffset = parseInteger(xml.bitOffset && xml.bitOffset[0]);
-            this.bitWidth = parseInteger(xml.bitWidth && xml.bitWidth[0]);
+            this.bitOffset = parseNumber(xml.bitOffset && xml.bitOffset[0]);
+            this.bitWidth = parseNumber(xml.bitWidth && xml.bitWidth[0]);
         }
         else if(xml.lsb){
-            this.bitOffset = parseInteger(xml.lsb && xml.lsb[0]);
-            let msb = parseInteger(xml.msb && xml.msb[0]);
+            this.bitOffset = parseNumber(xml.lsb && xml.lsb[0]);
+            let msb = parseNumber(xml.msb && xml.msb[0]);
             this.bitWidth = msb - this.bitOffset;
         }
         else if(xml.bitRange) {
-            let msbRe = '\[\d:';
-            let lsbRe = ':\d\]';
-            let msb = xml.bitRange[0].search(msbRe);
-            msb = parseInteger(msb);
+            let bitRange: string = xml.bitRange[0];
+            // let msbRe = /^\[\d\:/i
+            // let msb = msbRe.test(bitRange)
+            let msbRe = new RegExp(/^(?:\[)(\d+)(?:\:)/);
+            let msb = msbRe.exec(bitRange) && msbRe.exec(bitRange)[1];
+            let lsbRe = new RegExp(/(?:\:)(\d+)(?:\])$/);
+            let lsb = lsbRe.exec(bitRange) && lsbRe.exec(bitRange)[1];
 
-            let lsb = xml.bitRange[0].search(lsbRe);
-            this.bitOffset = parseInteger(lsb);
-            this.bitWidth = msb - this.bitOffset;
+            this.bitOffset = parseNumber(lsb);
+            this.bitWidth = parseNumber(msb) - this.bitOffset;
         }
     }
     public parseChildren(xml: any) {

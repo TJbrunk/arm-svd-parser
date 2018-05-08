@@ -1,5 +1,5 @@
 import { BaseElement } from "./base_element";
-import { DimElement, AccessType, ProtectionType, parseInteger, ACCESS_TYPE_MAP } from "./svd_parser";
+import { DimElement, AccessType, ProtectionType, parseNumber, ACCESS_TYPE_MAP } from "./svd_parser";
 import { WriteConstraint } from "./write_constraint";
 import { Field } from "./field";
 
@@ -31,7 +31,7 @@ export class Register extends BaseElement {
         this.displayName = xml.displayName && xml.displayName[0];
         this.altGroup = xml.alternateGroup && xml.alternateGroup[0];
         this.altRegister = xml.alternateRegister && xml.alternateRegister[0];
-        this.offset = parseInteger(xml.addressOffset[0]);
+        this.offset = parseNumber(xml.addressOffset[0]);
         this.properties = new RegisterProperties(xml);
         this.dataType = xml.dataType && xml.dataType[0];
         this.modifiedWrite = xml.modifiedWriteValues && xml.modifiedWriteValues[0];
@@ -59,11 +59,11 @@ export class RegisterProperties {
     resetMask?: number;
 
     constructor (xml: any) {
-            this.size = parseInteger(xml.size && xml.size[0])
+            this.size = parseNumber(xml.size && xml.size[0])
             this.access = ACCESS_TYPE_MAP[xml.access && xml.access[0]]; 
             this.protection = <ProtectionType>xml.protection && xml.protection[0];
-            this.resetValue = parseInteger(xml.resetValue && xml.resetValue[0]);
-            this.resetMask = parseInteger(xml.resetMask && xml.resetMask[0]);
+            this.resetValue = parseNumber(xml.resetValue && xml.resetValue[0]);
+            this.resetMask = parseNumber(xml.resetMask && xml.resetMask[0]);
             return this;
     }
 }

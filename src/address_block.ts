@@ -1,4 +1,4 @@
-import { ProtectionType, parseInteger } from "./svd_parser";
+import { ProtectionType, parseNumber } from "./svd_parser";
 
 
 //https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_peripherals.html#elem_addressBlock
@@ -9,8 +9,8 @@ export class AddressBlock {
     protection?: ProtectionType;
 
     constructor (xml: any) {
-        this.offset = parseInteger(xml.offset && xml.offset[0]);
-        this.size = parseInteger(xml.size && xml.size[0]);
+        this.offset = parseNumber(xml.offset && xml.offset[0]);
+        this.size = parseNumber(xml.size && xml.size[0]);
         this.usage = xml.usage && xml.usage[0];
         // TODO:
         // this.protection = this['protection'][0]; 

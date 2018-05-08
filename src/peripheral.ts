@@ -1,4 +1,4 @@
-import { parseInteger, DimElement } from "./svd_parser";
+import { parseNumber, DimElement } from "./svd_parser";
 import { AddressBlock } from "./address_block";
 import { Register, RegisterProperties } from "./register";
 import { BaseElement } from "./base_element";
@@ -45,7 +45,7 @@ export class Peripheral extends BaseElement{
             super(xml);
             this.verion = xml.version[0];
             this.groupName = xml.groupName && xml.groupName[0];
-            this.baseAddress = parseInteger(xml.baseAddress[0]);
+            this.baseAddress = parseNumber(xml.baseAddress[0]);
         }
     }
 

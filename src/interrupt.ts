@@ -1,4 +1,4 @@
-import { parseInteger } from "./svd_parser";
+import { parseNumber } from "./svd_parser";
 import { BaseElement } from "./base_element";
 
 // https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_peripherals.html#elem_interrupt
@@ -7,7 +7,7 @@ export class Interrupt extends BaseElement {
 
     constructor (xml: any) {
         super(xml);
-        this.value = parseInteger(xml.value[0]);
+        this.value = parseNumber(xml.value[0]);
         
         return this;
     }

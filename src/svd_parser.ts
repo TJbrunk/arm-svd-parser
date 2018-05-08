@@ -4,7 +4,9 @@ import { Register } from './register';
 import { Peripheral } from './peripheral';
 import { BaseElement } from './base_element';
 
-export function parseInteger(value: string): number {
+
+// Parses a string into a number based on the format of the string, hex, dec, bin
+export function parseNumber(value: string): number {
     if ((/^0b([01]+)$/i).test(value)) {
         return parseInt(value.substring(2), 2);
     }
