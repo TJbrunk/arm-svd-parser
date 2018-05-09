@@ -1,7 +1,7 @@
 // SVD Field element
 //https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_registers.html#elem_field
 
-import { AccessType, DimElement, parseNumber } from './svd_parser'
+import { AccessType, parseNumber } from './svd_parser'
 import { WriteConstraint } from './write_constraint';
 import { EnumeratedValues, EnumeratedValue } from './enumerated_value';
 import { ModifiedWriteType } from './register';
@@ -10,8 +10,6 @@ import { BaseElement } from './base_element';
 
 export class Field extends BaseElement{
 
-    public dimElement?: DimElement;
-    
     public bitOffset: number;
     public bitWidth: number;
     
@@ -24,7 +22,6 @@ export class Field extends BaseElement{
     constructor (xml: any) {
         // Set the name and description
         super(xml);
-        this.dimElement = new DimElement(xml);
         this.accessType = xml.access && xml.access[0];
     }
 
@@ -52,7 +49,9 @@ export class Field extends BaseElement{
             this.bitWidth = parseNumber(msb) - this.bitOffset;
         }
     }
+
     public parseChildren(xml: any) {
-        // A field doesn't have any complex children.
+        // Field element doesn't have any children
+        return;
     }
 }

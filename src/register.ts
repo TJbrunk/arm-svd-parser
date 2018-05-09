@@ -1,5 +1,5 @@
 import { BaseElement } from "./base_element";
-import { DimElement, AccessType, ProtectionType, parseNumber, ACCESS_TYPE_MAP } from "./svd_parser";
+import { AccessType, ProtectionType, parseNumber, ACCESS_TYPE_MAP } from "./svd_parser";
 import { WriteConstraint } from "./write_constraint";
 import { Field } from "./field";
 
@@ -10,10 +10,9 @@ export enum DataType {
     // TODO:
 }
 
-// https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_registers.html
+// https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_registers.html#elem_register
 export class Register extends BaseElement {
 
-    dimElement: DimElement;
     displayName?: string;
     altGroup?: string;
     altRegister?: string;
@@ -27,7 +26,6 @@ export class Register extends BaseElement {
 
     constructor(xml: any) {
         super(xml);
-        this.dimElement = new DimElement(xml);
         this.displayName = xml.displayName && xml.displayName[0];
         this.altGroup = xml.alternateGroup && xml.alternateGroup[0];
         this.altRegister = xml.alternateRegister && xml.alternateRegister[0];
@@ -38,10 +36,34 @@ export class Register extends BaseElement {
         this.writeContraint = new WriteConstraint(xml);
     }
 
-    public parseChildren(register: any) {
+    public parseChildren(register: any) : (Array<Register> | void) {
+        let regs: Array<Register>;
+        
         if(register.fields) {
             this.fields = [];
             register.fields[0].field.forEach(f => {
+
+                let newField : Field;
+                // Check if the field is defined as an array
+                if(f.dimIncrement && f.dimIncrement[0]) {
+                    let dims = BaseElement.parseDimElement(f);
+                    dims.forEach(dim => {
+                        f.name[0] = dim.name;
+                        f.description[0] = dim.description;
+                        newField = new Field(f);
+                        newField.parseBitOffset(f, this);
+                        newField.parseChildren(f);
+                        this.fields.push(newField);
+                    })
+                }
+                // Dim element not defined. Processes straight
+                else {
+                    newField = new Field(f);
+                    newField.parseBitOffset(f, this);
+                    newField.parseChildren(f);
+                    this.fields.push(newField);
+                }
+
                 let field = new Field(f);
                 field.parseBitOffset(f, this);
                 this.fields.push(field);

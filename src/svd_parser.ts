@@ -3,6 +3,7 @@ import * as xml2js from 'xml2js';
 import { Register } from './register';
 import { Peripheral } from './peripheral';
 import { BaseElement } from './base_element';
+import { Field } from './field';
 
 
 // Parses a string into a number based on the format of the string, hex, dec, bin
@@ -35,15 +36,16 @@ export class SvdParser {
 
             result.device.peripherals[0].peripheral.forEach(peripheral => {
                 // For each 'peripheral' in the peripherals section, parse it into the correct element
-                let isDerived = peripheral.$ && peripheral.$.derivedFrom || null;
-
-                let derived = null;
 
                 // If this peripheral is derived from another, initialize it with all the same settings.
                 // Any differences will be overwritten later
+                let isDerived = peripheral.$ && peripheral.$.derivedFrom || null;
+                let derived = null;
+
                 if(isDerived) {
                     derived = this.peripherals.get(isDerived);
                 }
+                
                 // derived = new Peripheral(peripheral);
                 let perf = new Peripheral(peripheral, derived);
                 perf.parseChildren(peripheral);
@@ -89,27 +91,6 @@ export const ACCESS_TYPE_MAP = {
 
 
 
-//https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_special.html#dimElementGroup_gr
-// The elements below appear on various levels and can be used to define arrays and lists in the code. Single descriptions get duplicated automatically into an array or a list. The subsequent is true for all elements of type dimableIdentifierType.
-//     To create arrays, use the placeholder [%s] at the end of a <name> and <displayName>. Do not define <dimIndex> in this case!
-//     To create lists, use the placeholder %s anywhere within or at the end of a <name> and <displayName>.
-// Note: 
-//     Some of the <name> and <displayName> elements can use both placeholders ([%s], %s), others just one. Refer to peripheral, register, cluster, and field for details.
-export class DimElement {
-    dim: number;
-    increment: number;
-    index?: number;
-    name?: string;
-    arrayIndex?: number; // This is header/enum data
 
-    constructor(xml: any) {
-        this.dim = xml.dim && xml.dim[0];
-        this.increment = xml.dimIncrement && xml.dimIncrement[0];
-        this.arrayIndex = xml.dimArrayIndex && xml.dimArrayIndex[0];
-        this.index = xml.dimIndex && xml.dimIndex[0];
-        this.name = xml.dimName && xml.dimName[0];
-        return this;
-    }
-}
 
 

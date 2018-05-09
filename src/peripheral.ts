@@ -1,4 +1,4 @@
-import { parseNumber, DimElement } from "./svd_parser";
+import { parseNumber } from "./svd_parser";
 import { AddressBlock } from "./address_block";
 import { Register, RegisterProperties } from "./register";
 import { BaseElement } from "./base_element";
@@ -8,7 +8,6 @@ import { Interrupt } from "./interrupt";
 // https://www.keil.com/pack/doc/CMSIS/SVD/html/elem_peripherals.html#elem_peripheral
 export class Peripheral extends BaseElement{
 
-    dimElement?: DimElement;
     verion?: string;
     groupName?: string;
     baseAddress: number;
@@ -42,6 +41,7 @@ export class Peripheral extends BaseElement{
             this.registers = source.registers;
         }
         else {
+            // Not derived from another object. Just set the provided properties
             super(xml);
             this.verion = xml.version[0];
             this.groupName = xml.groupName && xml.groupName[0];
@@ -53,7 +53,7 @@ export class Peripheral extends BaseElement{
     public parseChildren(xml: any) {
 
         // 0-1 dimElementGroup properties
-        this.dimElement = new DimElement(xml);
+        // this.dimElement = new DimElement(xml);
 
         // Can be 0 or 1 Register property in a peripheral
         this.properties = new RegisterProperties(xml);
@@ -80,11 +80,36 @@ export class Peripheral extends BaseElement{
         {
             this.registers = [];
             xml.registers[0].register.forEach(reg => {
-                // The <registers></registers> block may also contain cluster element
-                let newReg = new Register(reg);
-                newReg.parseChildren(reg);
-                this.registers.push(newReg);
+                // Check if the register is derived from another register
+                let isDerived = reg.$ && reg.$.derivedFrom || null;
+                let derived = null;
+
+                if(isDerived) {
+                    // TODO:
+                    //derived = this.registers.get(isDerived);
+                }
+                let newReg : Register;
+                // Check if the register is defined as an array
+                if(reg.dimIncrement && reg.dimIncrement[0]) {
+                    let dims = BaseElement.parseDimElement(reg);
+                    dims.forEach(dim => {
+                        reg.name[0] = dim.name;
+                        reg.description[0] = dim.description;
+                        reg.addressOffset[0] = dim.addressOffset;
+                        newReg = new Register(reg)
+                        newReg.parseChildren(reg);
+                        this.registers.push(newReg);
+                    })
+                }
+                // Dim element not defined. Processes straight
+                else {
+                    newReg = new Register(reg);
+                    newReg.parseChildren(reg);
+                    this.registers.push(newReg);
+                }
             });
+
+            // TODO: Process Cluster elements
         }
     }
 }
