@@ -63,10 +63,6 @@ export class Register extends BaseElement {
                     newField.parseChildren(f);
                     this.fields.push(newField);
                 }
-
-                let field = new Field(f);
-                field.parseBitOffset(f, this);
-                this.fields.push(field);
             });
         }
     }

@@ -3,7 +3,7 @@
 
 import { AccessType, parseNumber } from './svd_parser'
 import { WriteConstraint } from './write_constraint';
-import { EnumeratedValues, EnumeratedValue } from './enumerated_value';
+import { EnumeratedValue } from './enumerated_value';
 import { ModifiedWriteType } from './register';
 import { inherits } from 'util';
 import { BaseElement } from './base_element';
@@ -16,8 +16,8 @@ export class Field extends BaseElement{
     public accessType?: AccessType;
     public modifiedWriteType?: ModifiedWriteType;
     public writeContraint?: WriteConstraint;
-    // readAction
-    public enumValues?: EnumeratedValues;
+    // TODO: public readAction?: 
+    public enumValues?: Map<string, EnumeratedValue>;
 
     constructor (xml: any) {
         // Set the name and description
@@ -51,7 +51,10 @@ export class Field extends BaseElement{
     }
 
     public parseChildren(xml: any) {
-        // Field element doesn't have any children
+        // Field may have enums defined
+        if(xml.enumeratedValues) {
+            this.enumValues = EnumeratedValue.parseEnum(xml.enumeratedValues[0]);
+        }
         return;
     }
 }

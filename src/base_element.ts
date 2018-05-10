@@ -1,4 +1,3 @@
-
 // Common propterties and methods that all SVD elements should have/handle
 export abstract class BaseElement {
 
@@ -79,57 +78,3 @@ export abstract class BaseElement {
         }
     }
 }
-
-/*class DimElement {
-    // Return type of caller (Register, Cluster, Field...)
-    static parse (xml: any) : Array<any> {
-        let dims : Array<any> = Array<any>();
-
-        // Get replacement values
-        let dimValues = DimElement.getDimValues(xml);
-        let addressIncrement = parseInt(xml.dimIncrement[0]); // This is required
-        dimValues.forEach((element, index) => {
-            dims.push(
-                {
-                    name: xml.name[0].replace('%s', element),
-                    description: xml.description[0].replace('%s', element),
-                    addressOffset: parseInt(xml.addressOffset[0]) + (addressIncrement * index)
-                }
-            )
-        });
-        
-        return dims;
-    }
-
-    private static getDimValues(xml: any) : Array<string> {
-        let indexes = Array<string>();
-        try {
-            // Try <dimIndex>A,B,C,D,E,Z</dimIndex> style
-            indexes = xml.dimIndex[0].split(',');
-
-            // Try <dimIndex>3-6</dimIndex> style
-            if(!indexes) {
-                let startEnd = xml.dimIndex[0].split('-');
-                let start = parseInt(startEnd[0]);
-                let end = parseInt(startEnd[0]);
-
-                for (let index = start; index <= end; index++) {
-                    indexes.push(index.toString());
-                }
-            }
-        }
-        catch {
-            // Style:
-            // <register>
-            //     <dim>4</dim> 
-            //     <dimIncrement>4</dimIncrement> 
-            //     <name>MyArr[%s]</name> 
-            // ...
-            // </register>
-            indexes.push(xml.dim[0]);
-        }
-        finally {
-            return indexes;
-        }
-    }
-}*/
