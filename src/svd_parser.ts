@@ -52,9 +52,11 @@ export class SvdParser {
 
                 // Add the peripheral to the array
                 this.peripherals.set(perf.name, perf);
-                console.log(perf)
+                // console.log(perf)
             });
         });
+
+        console.log(this.peripherals.get('DMA').registers.get('STATUS').fields.get('STATE'))
     }
 
     public Parse(svdFile: string = 'EFM32GG995F1024.svd') {

@@ -22,7 +22,7 @@ export class Register extends BaseElement {
     modifiedWrite?: ModifiedWriteType;
     writeContraint?: WriteConstraint;
     // readAction?: 
-    fields?: Array<Field>;
+    fields?: Map<string, Field>;
 
     constructor(xml: any) {
         super(xml);
@@ -40,7 +40,7 @@ export class Register extends BaseElement {
         let regs: Array<Register>;
         
         if(register.fields) {
-            this.fields = [];
+            this.fields = new Map();
             register.fields[0].field.forEach(f => {
 
                 let newField : Field;
@@ -53,7 +53,7 @@ export class Register extends BaseElement {
                         newField = new Field(f);
                         newField.parseBitOffset(f, this);
                         newField.parseChildren(f);
-                        this.fields.push(newField);
+                        this.fields.set(newField.name, newField);
                     })
                 }
                 // Dim element not defined. Processes straight
@@ -61,7 +61,7 @@ export class Register extends BaseElement {
                     newField = new Field(f);
                     newField.parseBitOffset(f, this);
                     newField.parseChildren(f);
-                    this.fields.push(newField);
+                    this.fields.set(newField.name, newField);
                 }
             });
         }

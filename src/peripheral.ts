@@ -13,8 +13,8 @@ export class Peripheral extends BaseElement{
     baseAddress: number;
     properties?: RegisterProperties;
     addressBlocks? : Array<AddressBlock>;
-    interrupts?: Array<Interrupt>;
-    registers?: Array<Register>;
+    interrupts?: Map<string, Interrupt>;
+    registers?: Map<string, Register>;
 
     // Not implemented:
     // alternateElement? : ??;
@@ -69,16 +69,17 @@ export class Peripheral extends BaseElement{
 
         let hasInterrups = xml.interrupt;
         if(hasInterrups) {
-            this.interrupts = [];
+            this.interrupts = new Map();
             xml.interrupt.forEach(int => {
-                this.interrupts.push(new Interrupt(int));
+                let i: Interrupt = new Interrupt(int)
+                this.interrupts.set(i.name, i);
             });
         }
         
 
         if(xml.registers)
         {
-            this.registers = [];
+            this.registers = new Map();
             xml.registers[0].register.forEach(reg => {
                 // Check if the register is derived from another register
                 let isDerived = reg.$ && reg.$.derivedFrom || null;
@@ -98,14 +99,14 @@ export class Peripheral extends BaseElement{
                         reg.addressOffset[0] = dim.addressOffset;
                         newReg = new Register(reg)
                         newReg.parseChildren(reg);
-                        this.registers.push(newReg);
+                        this.registers.set(newReg.name, newReg);
                     })
                 }
                 // Dim element not defined. Processes straight
                 else {
                     newReg = new Register(reg);
                     newReg.parseChildren(reg);
-                    this.registers.push(newReg);
+                    this.registers.set(newReg.name, newReg);
                 }
             });
 
