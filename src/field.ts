@@ -38,8 +38,6 @@ export class Field extends BaseElement{
         }
         else if(xml.bitRange) {
             let bitRange: string = xml.bitRange[0];
-            // let msbRe = /^\[\d\:/i
-            // let msb = msbRe.test(bitRange)
             let msbRe = new RegExp(/^(?:\[)(\d+)(?:\:)/);
             let msb = msbRe.exec(bitRange) && msbRe.exec(bitRange)[1];
             let lsbRe = new RegExp(/(?:\:)(\d+)(?:\])$/);
